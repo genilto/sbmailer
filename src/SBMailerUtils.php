@@ -222,9 +222,9 @@ class SBMailerUtils {
 
     /**
      * Validate if email address is valid
-     * 
+     *
      * @param string $address the email address
-     * 
+     *
      * @return bool true if email is valid
      */
     public static function validateAddress ($address) {
@@ -234,9 +234,9 @@ class SBMailerUtils {
     /**
      * Clean up the email address. Currently just apply a trim
      * Remove spaces from left and right
-     * 
+     *
      * @param string $address the email address
-     * 
+     *
      * @return string fixed email address
      */
     public static function cleanAddress ($address) {
@@ -250,9 +250,9 @@ class SBMailerUtils {
     /**
      * Clean up the name
      * Strip breaks and trim
-     * 
+     *
      * @param string $name
-     * 
+     *
      * @return string fixed name
      */
     public static function cleanName ($name) {
@@ -264,11 +264,11 @@ class SBMailerUtils {
 
     /**
      * Reads entire file into a string
-     * 
+     *
      * @param string $path
-     * 
+     *
      * @return string The function returns the read data
-     * 
+     *
      * @throws \Exception when not possible to read the file
      */
     public static function getFileContents ($path) {
@@ -281,9 +281,9 @@ class SBMailerUtils {
 
     /**
      * Get aproximate memory usage of some email message
-     * 
+     *
      * @param array $email
-     * 
+     *
      * @return int The aproximated bytes of message
      */
     public static function getMemoryUsage ($email) {

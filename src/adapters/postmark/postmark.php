@@ -7,8 +7,8 @@ use \Postmark\Models\PostmarkAttachment;
 
 class SBPostmarkAdapter implements iSBMailerAdapter {
 
-    public const MAX_MESSAGES_IN_QUEUE = 500;
-    public const MAX_QUEUE_SIZE = 35000000; // Postmark limits to 50MB. Defining less than the limit
+    public static $MAX_MESSAGES_IN_QUEUE = 500;
+    public static $MAX_QUEUE_SIZE = 35000000; // Postmark limits to 50MB. Defining less than the limit
 
     private $apiKey;
     private $email;
@@ -30,21 +30,21 @@ class SBPostmarkAdapter implements iSBMailerAdapter {
     }
     private function resetEmail () {
         $this->email = array(
-            'From' => NULL,
-            'ReplyTo' => NULL,
-            'To' => NULL,
-            'Cc' => NULL,
-            'Bcc' => NULL,
-            'Subject' => NULL,
-            'TextBody' => NULL,
-            'HtmlBody' => NULL,
-            "Attachments" => NULL, // array
-            'Tag' => NULL,
-            'Metadata' =>  NULL, // array
-            'Headers' => NULL, // array
-            'TrackOpens' => NULL,
-            "TrackLinks" => NULL,
-            'MessageStream' => NULL,
+            'From' => null,
+            'ReplyTo' => null,
+            'To' => null,
+            'Cc' => null,
+            'Bcc' => null,
+            'Subject' => null,
+            'TextBody' => null,
+            'HtmlBody' => null,
+            "Attachments" => null, // array
+            'Tag' => null,
+            'Metadata' =>  null, // array
+            'Headers' => null, // array
+            'TrackOpens' => null,
+            "TrackLinks" => null,
+            'MessageStream' => null,
             'size' => 0
         );
     }
@@ -86,9 +86,9 @@ class SBPostmarkAdapter implements iSBMailerAdapter {
             $name = (string) SBMailerUtils::mb_pathinfo($path, PATHINFO_BASENAME);
         }
         $attachment = PostmarkAttachment::fromRawData($contents, $name, $type);
-        
+
         $key = "Attachments";
-        if ($this->email[$key] === NULL) {
+        if ($this->email[$key] === null) {
             $this->email[$key] = [];
         }
 
@@ -144,12 +144,12 @@ class SBPostmarkAdapter implements iSBMailerAdapter {
         $this->email['size'] = SBMailerUtils::getMemoryUsage($this->email);
         // When reach the max messages in queue
         // Or the maximum amount of memory usage
-        return (count($this->deferedList) >= self::MAX_MESSAGES_IN_QUEUE) || 
-            (($this->queueSize + $this->email['size']) >= self::MAX_QUEUE_SIZE);
+        return (count($this->deferedList) >= self::$MAX_MESSAGES_IN_QUEUE) ||
+            (($this->queueSize + $this->email['size']) >= self::$MAX_QUEUE_SIZE);
     }
     private function sendMailBatch ($client, &$chunckedList, &$response, $totalSize) {
         $startTime = time();
-        
+
         $sendResult = $client->sendEmailBatch($chunckedList);
         if (!empty($sendResult)) {
             while ($sendResult->valid()) {
@@ -163,7 +163,7 @@ class SBPostmarkAdapter implements iSBMailerAdapter {
                 $sendResult->next();
             }
         }
-        
+
         // foreach($chunckedList as $index => $email) {
         //     $response[] = array(
         //                     "status" => "SUCCESS",
@@ -173,7 +173,7 @@ class SBPostmarkAdapter implements iSBMailerAdapter {
         //                 );
         // }
         $endTime = time();
-        
+
         // Add a last object with some stats
         $response[] = array(
                             "status" => "STATS",
@@ -196,7 +196,7 @@ class SBPostmarkAdapter implements iSBMailerAdapter {
         $chunckedList = [];
 
         foreach($this->deferedList as $email) {
-            if (($totalMessages >= self::MAX_MESSAGES_IN_QUEUE) || (($totalSize + $email['size']) >= self::MAX_QUEUE_SIZE)) {
+            if (($totalMessages >= self::$MAX_MESSAGES_IN_QUEUE) || (($totalSize + $email['size']) >= self::$MAX_QUEUE_SIZE)) {
                 //echo " Sending (Chuncked): " . count($chunckedList) . " emails " . ($totalSize / 1024 / 1024) . "MB <br>";
                 $this->sendMailBatch ($client, $chunckedList, $response, $totalSize);
                 $totalMessages = 0;
